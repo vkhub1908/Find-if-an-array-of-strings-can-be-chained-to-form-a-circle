@@ -1,0 +1,115 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace ConsoleApp23
+{
+    class Program
+    {
+
+        static string[] InitialArray = { "aaa", "aab", "bba", "aab","ba", "axi", "iaa"};
+        static char firstVertex = InitialArray[0][0];
+        static Boolean canChain;
+        static void Main(string[] args)
+        {           
+
+            char currentVertex = firstVertex;
+
+            Dictionary<char, ArrayList> graph = new Dictionary<char, ArrayList>();
+
+            ArrayList edges;
+
+            foreach(string item in InitialArray)
+            {
+                if(graph.ContainsKey(item[0]))
+                {
+                    edges = new ArrayList();
+                    edges = graph[item[0]];
+                    edges.Add(item[item.Length - 1]);
+                    graph[item[0]] = edges;
+                    if (!graph.ContainsKey(item[item.Length - 1]))
+                    {
+                        edges = new ArrayList();
+                        graph.Add(item[item.Length - 1], edges);
+                    }
+                }
+                else
+                {
+                    edges = new ArrayList();
+                    edges.Add(item[item.Length - 1]);
+                    graph.Add(item[0], edges);
+                    if(!graph.ContainsKey(item[item.Length - 1]))
+                    {
+                        edges = new ArrayList();
+                        graph.Add(item[item.Length - 1], edges);
+                    }
+                }
+            }
+
+            if(checkChainOrNo(currentVertex, graph))
+            {
+                Console.WriteLine("Can Chain");
+            }
+            else
+            {
+                Console.WriteLine("Cannot Chain");
+            }
+
+            Console.ReadKey();
+
+        }
+
+        public static bool checkChainOrNo(char currentVertex, Dictionary<char,ArrayList> currentGraph)
+        {
+            char PreviousVertex = currentVertex;
+            var edges = currentGraph[currentVertex];
+            if (edges.Count > 0)
+            {
+                currentVertex = (char)edges[0];
+                edges.Remove(currentVertex);
+                currentGraph[PreviousVertex] = edges;
+
+                if (currentVertex == firstVertex && currentGraph[currentVertex].Count == 0)
+                {
+                    foreach (KeyValuePair<char, ArrayList> vertexes in currentGraph)
+                    {
+                        if (vertexes.Value.Count == 0)
+                        {
+                            canChain = true;
+                        }
+                        else
+                        {
+                            canChain = false;
+                        }
+                    }
+                }
+                else
+                {
+                    checkChainOrNo(currentVertex, currentGraph);
+                }
+            }
+            else
+            {
+                if(currentVertex == firstVertex)
+                {
+                    foreach (KeyValuePair<char, ArrayList> vertexes in currentGraph)
+                    {
+                        if (vertexes.Value.Count == 0)
+                        {
+                            canChain = true;
+                        }
+                        else
+                        {
+                            canChain = false;
+                        }
+                    }
+                }
+            }
+
+            return canChain;
+        }
+    }
+}
