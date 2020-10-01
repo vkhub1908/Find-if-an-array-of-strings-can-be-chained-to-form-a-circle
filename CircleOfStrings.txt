@@ -1,3 +1,4 @@
+//code for finding an array of strings can be chained to form a circle
 using System;
 using System.Collections;
 using System.Collections.Generic;
